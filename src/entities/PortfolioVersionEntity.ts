@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { registerEnumType, Field, ObjectType } from 'type-graphql';
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import PortfolioEntity from './PortfolioEntity';
 import PageEntity from './PageEntity';
@@ -9,6 +9,12 @@ export enum VersionType {
   SNAPSHOT = 'SNAPSHOT',
 }
 
+// Register the enum with TypeGraphQL
+registerEnumType(VersionType, {
+  name: 'VersionType',
+  description: 'The different types of portfolio versions',
+});
+
 @ObjectType('PortfolioVersion')
 @Entity()
 export default class PortfolioVersionEntity {
@@ -17,7 +23,7 @@ export default class PortfolioVersionEntity {
   id: number;
 
   @Field(() => VersionType)
-  @Column({ type: 'enum', enum: VersionType, default: VersionType.DRAFT })
+  @Column({ type: 'varchar', default: VersionType.DRAFT })
   type: VersionType;
 
   @Field()
