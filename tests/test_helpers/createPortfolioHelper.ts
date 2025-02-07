@@ -1,20 +1,25 @@
 import faker from 'faker';
 import { DeepPartial, getRepository } from 'typeorm';
 import PortfolioEntity from '../../src/entities/PortfolioEntity';
+import PortfolioVersionEntity, { VersionType } from '../../src/entities/PortfolioVersionEntity';
 
-export function buildPortfolioEntity(properties?: DeepPartial<PortfolioEntity>) {
-  const repository = getRepository(PortfolioEntity);
+export async function createPortfolioEntity(properties?: DeepPartial<PortfolioEntity>) {
+  const portfolioRepo = getRepository(PortfolioEntity);
+  const portfolioVersionRepo = getRepository(PortfolioVersionEntity);
 
-  return repository.create({
-    name: faker.name.findName(),
-    url: faker.internet.url(),
-    ...properties,
+  const portfolio = await portfolioRepo.save(
+    portfolioRepo.create({
+      name: faker.name.findName(),
+      url: faker.internet.url(),
+      ...properties,
+    })
+  );
+
+  // Create initial draft version
+  await portfolioVersionRepo.save({
+    type: VersionType.DRAFT,
+    portfolio,
   });
-}
 
-async function createPortfolioEntity(properties?: DeepPartial<PortfolioEntity>) {
-  const repository = getRepository(PortfolioEntity);
-  return repository.save(buildPortfolioEntity(properties));
+  return portfolio;
 }
-
-export default createPortfolioEntity;

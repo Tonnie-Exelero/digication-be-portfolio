@@ -9,27 +9,31 @@ import PageEntity from '../entities/PageEntity';
 @Service()
 export default class PortfolioVersionResolver {
   // Get all versions for a portfolio
-  @Query(() => [PortfolioVersionEntity])
+  @Query(() => [PortfolioVersionEntity], { description: 'Get portfolio versions' })
   async getPortfolioVersions(@Arg('portfolioId', () => ID) portfolioId: number) {
     const portfolio = await getRepository(PortfolioEntity).findOne(portfolioId, {
       relations: ['versions'],
     });
+
     if (!portfolio) throw new Error('Portfolio not found');
+
     return portfolio.versions;
   }
 
   // Get pages for a specific version
-  @Query(() => [PageEntity])
+  @Query(() => [PageEntity], { description: 'Get pages for a version' })
   async getPortfolioVersionPages(@Arg('versionId', () => ID) versionId: number) {
     const version = await getRepository(PortfolioVersionEntity).findOne(versionId, {
       relations: ['pages'],
     });
+
     if (!version) throw new Error('Version not found');
+
     return version.pages;
   }
 
   // Create a snapshot from the latest draft
-  @Mutation(() => PortfolioVersionEntity)
+  @Mutation(() => PortfolioVersionEntity, { description: 'Create a snapshot' })
   async createSnapshotVersion(@Arg('portfolioId', () => ID) portfolioId: number) {
     const portfolioRepo = getRepository(PortfolioEntity);
     const versionRepo = getRepository(PortfolioVersionEntity);
