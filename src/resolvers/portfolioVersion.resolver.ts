@@ -9,7 +9,7 @@ import PageEntity from '../entities/PageEntity';
 @Service()
 export default class PortfolioVersionResolver {
   // Get all versions for a portfolio
-  @Query(() => [PortfolioVersionEntity], { description: 'Get portfolio versions' })
+  @Query(() => [PortfolioVersionEntity], { name: 'portfolioVersions', description: 'Get portfolio versions' })
   async getPortfolioVersions(@Arg('portfolioId', () => ID) portfolioId: number) {
     const portfolio = await getRepository(PortfolioEntity).findOne(portfolioId, {
       relations: ['versions'],
@@ -21,7 +21,7 @@ export default class PortfolioVersionResolver {
   }
 
   // Get pages for a specific version
-  @Query(() => [PageEntity], { description: 'Get pages for a version' })
+  @Query(() => [PageEntity], { name: 'portfolioVersionPages', description: 'Get pages for a version' })
   async getPortfolioVersionPages(@Arg('versionId', () => ID) versionId: number) {
     const version = await getRepository(PortfolioVersionEntity).findOne(versionId, {
       relations: ['pages'],
