@@ -8,7 +8,15 @@ import PageEntity from '../entities/PageEntity';
 @Resolver()
 @Service()
 export default class PortfolioVersionResolver {
-  // Get all versions for a portfolio
+  /**
+   * Retrieves all versions associated with a specific portfolio.
+   *
+   * @decorator Query(() => [PortfolioVersionEntity])
+   * @param {number} portfolioId - The unique identifier of the portfolio
+   * @returns {Promise<PortfolioVersionEntity[]>} Array of portfolio version entities
+   * @throws {Error} When portfolio with given ID is not found
+   * @throws {TypeORMError} If the database query fails
+   */
   @Query(() => [PortfolioVersionEntity], { name: 'portfolioVersions', description: 'Get portfolio versions' })
   async getPortfolioVersions(@Arg('portfolioId', () => ID) portfolioId: number) {
     const portfolio = await getRepository(PortfolioEntity).findOne(portfolioId, {
@@ -20,7 +28,15 @@ export default class PortfolioVersionResolver {
     return portfolio.versions;
   }
 
-  // Get pages for a specific version
+  /**
+   * Retrieves all pages associated with a specific portfolio version.
+   *
+   * @decorator Query(() => [PageEntity])
+   * @param {number} versionId - The unique identifier of the portfolio version
+   * @returns {Promise<PageEntity[]>} Array of page entities belonging to the specified version
+   * @throws {Error} When version with given ID is not found
+   * @throws {TypeORMError} If the database query fails
+   */
   @Query(() => [PageEntity], { name: 'portfolioVersionPages', description: 'Get pages for a version' })
   async getPortfolioVersionPages(@Arg('versionId', () => ID) versionId: number) {
     const version = await getRepository(PortfolioVersionEntity).findOne(versionId, {
@@ -32,7 +48,15 @@ export default class PortfolioVersionResolver {
     return version.pages;
   }
 
-  // Create a snapshot from the latest draft
+  /**
+   * Create a snapshot from the latest draft.
+   *
+   * @decorator Mutation(() => [PortfolioVersionEntity])
+   * @param {number} portfolioId - The unique identifier of the portfolio
+   * @returns {Promise<PortfolioVersionEntity[]>} Array of portfolio version entities
+   * @throws {Error} When version with given ID is not found
+   * @throws {TypeORMError} If the database query fails
+   */
   @Mutation(() => PortfolioVersionEntity, { description: 'Create a snapshot' })
   async createSnapshotVersion(@Arg('portfolioId', () => ID) portfolioId: number) {
     const portfolioRepo = getRepository(PortfolioEntity);
